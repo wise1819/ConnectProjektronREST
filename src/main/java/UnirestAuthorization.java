@@ -17,6 +17,10 @@ public class UnirestAuthorization {
 
 		String username = ""; // TODO: fill in blanks
 		String password = "";
+		if (username.equals("") || password.equals("")) {
+			System.out.println("Please provide Username and password");
+			return;
+		}
 		List<JSONObject> bookings = getBookings(username, password);
 
 		bookings.forEach(System.out::println);
