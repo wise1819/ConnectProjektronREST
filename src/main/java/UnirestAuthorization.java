@@ -100,8 +100,9 @@ public class UnirestAuthorization {
             data.put("userLogin", username);
             data.put("userPwd", password);
         }
-        //TODO: Status code after post is 404 despite being right URL
-        HttpResponse<String> authResponse = Unirest.post(urlBCS + "/app/rest/auth/login")
+        //TODO: @Christian, Problem ist hier, dass das JSON wohl nicht richtig ankommt. Bin mir nicht ganz sicher weshalb, der Code ist egientlich noch immer deiner aus Postman.
+        // Bekomme gerade 403, was ich auch bekommen habe als das JSON im body falsch war.
+        HttpResponse<String> authResponse = Unirest.post(urlBCS)
                 .header("Content-Type", "application/json").header("cache-control", "no-cache")
                 .header("Content-Encoding", "UTF-8").body(new JSONObject(data).toString()).asString();
         String allCookies = authResponse.getHeaders().get("set-cookie");
