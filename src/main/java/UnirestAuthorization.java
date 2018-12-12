@@ -11,6 +11,8 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
+import static spark.Spark.*
+
 public class UnirestAuthorization {
 
 	public static void main(String[] args) throws UnirestException {
@@ -18,14 +20,40 @@ public class UnirestAuthorization {
 		String username = "Admin"; // TODO: fill in blanks
 		String password = "Admin";
 		String urlBCS = "http://fuberlinws18.demo.projektron.de";
-		String urlRESTPath = "/app/rest/timerecording/bookings?syncStateTimestamp=0&minDate=2018-10-29";
+		String urlRESTPath = "/app/rest/timerecording/bookings";
 
 		if (username.equals("") || password.equals("")) {
 			System.out.println("Please provide Username and password");
 			return;
 		}
 
+		// ### GET ###
+		get("",(req,res) -> null );
+		get("/rest/timerecording/bookings",(req,res) ->  null);
+		get("/rest/mylyn/scrum/sprints/",(req,res) -> null );
+		get("/rest/mylyn/scrum/sprints/:oid",(req,res) ->  null);
+		get("/rest/mylyn/tickets/all",(req,res) ->  null);
+		get("/rest/mylyn/tickets",(req,res) -> null );
+		get("/rest/mylyn/tickets/:oid",(req,res) ->  null);
+
+		// ### POST ###
+		post("",(req,res) -> null);
+		post("/rest/mylyn/scrum/sprints/:oid/createActivity",(req,res) -> null);
+		post("/rest/mylyn/tickets/:ticketOid/createComment",(req,res) -> null);
+
+		// ### PUT ###
+		put("",(req,res) -> );
+		put("/rest/mylyn/scrum/sprints/modifyActivity/:oid",(req,res) -> null);
+
+
+
+
+
+
 		AuthenticationObject ao = authenticate(username, password, urlBCS);
+
+
+
 
 		List<JSONObject> bookings = new ArrayList<JSONObject>();
 
