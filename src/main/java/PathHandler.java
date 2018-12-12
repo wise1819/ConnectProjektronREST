@@ -21,8 +21,8 @@ public class PathHandler {
 
         //Concatenating baseURL with specific path for endpoint
         for (Map.Entry<String,String> item: bcsPaths.entrySet()){
-            String i = item.getValue();
-            i = urlBCS + i;
+
+            bcsPaths.put(item.getKey(),urlBCS + item.getValue() );
         }
     }
 
