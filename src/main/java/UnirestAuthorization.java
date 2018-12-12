@@ -1,5 +1,9 @@
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.mashape.unirest.http.HttpResponse;
@@ -23,11 +27,22 @@ public class UnirestAuthorization {
 
 		AuthenticationObject ao = authenticate(username, password, urlBCS);
 
+		List<JSONObject> bookings = new ArrayList<JSONObject>();
 
-		HttpResponse<JsonNode> req = ao.prepareRequest(HttpVerb.GET, urlBCS + urlRESTPath );
 
+		HttpResponse<JsonNode> res = ao.prepareRequest(Verbs.GET, urlBCS + urlRESTPath );
 
-		//HttpResponse<JsonNode> res = Unirest.get(urlBCS + urlRESTPath);
+		try {
+
+			JSONArray bookingsJsonArray = res.getBody().getObject().getJSONArray("bookings");
+			for (int i = 0; i < bookingsJsonArray.length(); i++) {
+				bookings.add(bookingsJsonArray.getJSONObject(i));
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		bookings.forEach(System.out::println);
 
 
 	}
@@ -48,7 +63,7 @@ public class UnirestAuthorization {
 	}
 
 
-public enum HttpVerb {
+public enum Verbs {
 		GET,POST,PUT
 }
 

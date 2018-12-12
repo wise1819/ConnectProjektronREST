@@ -24,14 +24,14 @@ public class AuthenticationObject {
      * @param type Type of the request you want to make => get, post, put
      * @return A Object that has the necessary authentication data already filled in
      */
-    public HttpResponse<JsonNode> prepareRequest(HttpVerb type, String url){
+    public HttpResponse<JsonNode> prepareRequest(UnirestAuthorization.Verbs type, String url){
         try {
         switch (type) {
-            case HttpVerbs:
+            case GET:
                 return prepareGetRequest(url);
-            case "post":
+            case POST:
                 return preparePostRequest(url);
-            case "put":
+            case PUT:
                 return preparePutRequest(url);
             default:
                  System.err.println("No legal http-verb chosen, use \"get, post or put\"");
