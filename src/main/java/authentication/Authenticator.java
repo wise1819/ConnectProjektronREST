@@ -28,15 +28,14 @@ public class Authenticator {
 				String xCsrfToken = getXCsrfToken(authResponse);
 				return new AuthenticationObject(mobileAppTokenCookie, xCsrfToken);
 			} else {
-				System.out.println(authResponse);
-				return INVALID_AUTHENTICATIONOBJECT;
+				return new AuthenticationObject("ResponseCode was not 200 but: " + authResponse.getCode()
+						+ ". Authorization Response was: " + authResponse.getBody());
 			}
 
 		} catch (UnirestException e) {
 			e.printStackTrace();
+			return new AuthenticationObject("Exception happened during authorization: " + e.getMessage());
 		}
-		return INVALID_AUTHENTICATIONOBJECT;
-
 	}
 
 	public AuthenticationObject authenticateToDemoServer(String username, String password) {
@@ -50,7 +49,6 @@ public class Authenticator {
 			if (authResponse.getCode() == 200) {
 				String mobileAppTokenCookie = getMobileAppTokenCookie(authResponse);
 				String xCsrfToken = getXCsrfToken(authResponse);
-				System.out.println(mobileAppTokenCookie);
 				return new AuthenticationObject(mobileAppTokenCookie, xCsrfToken);
 			} else {
 				return INVALID_AUTHENTICATIONOBJECT;
