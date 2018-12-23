@@ -17,8 +17,8 @@ import authentication.AuthenticationObject;
 
 public class BookingsFetcher {
 
-	private static final String BCS_SERVER = "https://fu-projekt.bcs-hosting.de";
-	private static final String BOOKINGS_PATH = "/app/rest/timerecording/bookings?syncStateTimestamp=0&minDate=2018-09-29";
+	private static final String BCS_SERVER = "http://fuberlinws18.demo.projektron.de";
+	private static final String BOOKINGS_PATH = "/app/rest/timerecording/bookings";
 
 	public List<JSONObject> fetchAllBookingsForAccount(AuthenticationObject auth) {
 		String url = BCS_SERVER + BOOKINGS_PATH;

@@ -2,35 +2,70 @@ package authentication;
 
 public class AuthenticationObject {
 
-	private final String mobileAppTokenCookie;
-	private final String xCsrfToken;
-	private final String authenticationMessage;
+    enum API_TYPE {
+        BOOKINGS, MYLIN
+    }
 
-	public AuthenticationObject(String mobileAppTokenCookie, String xCsrfToken) {
-		this.mobileAppTokenCookie = mobileAppTokenCookie;
-		this.xCsrfToken = xCsrfToken;
-		this.authenticationMessage = "";
-	}
+    private final String mobileAppTokenCookie;
+    private final String xCsrfToken;
+    private final String authenticationMessage;
+    private final String jsessionID;
+    private final API_TYPE api;
 
-	public AuthenticationObject(String message) {
-		this.mobileAppTokenCookie = "";
-		this.xCsrfToken = "";
-		this.authenticationMessage = message;
-	}
+    /**
+     * AuthenticationObject containing Cookie-Data
+     *
+     * @param otherCookie
+     * @param xCsrfToken
+     */
+    public AuthenticationObject(String xCsrfToken, String otherCookie, API_TYPE api) {
 
-	public String getMobileAppTokenCookie() {
-		return mobileAppTokenCookie;
-	}
+        if (api == api.BOOKINGS) {
+            this.mobileAppTokenCookie = otherCookie;
+            this.xCsrfToken = xCsrfToken;
+            this.authenticationMessage = "";
+            this.jsessionID = null;
+            this.api = api;
+        } else {
+            this.mobileAppTokenCookie = null;
+            this.xCsrfToken = xCsrfToken;
+            this.jsessionID = otherCookie;
+            this.authenticationMessage = "";
+            this.api = api;
+        }
 
-	public String getxCsrfToken() {
-		return xCsrfToken;
-	}
+    }
 
-	public boolean isValid() {
-		return !(mobileAppTokenCookie.isEmpty() || xCsrfToken.isEmpty());
-	}
+    /**
+     * AuthenticationObject if authentication did not work
+     *
+     * @param message
+     */
+    public AuthenticationObject(String message) {
+        this.mobileAppTokenCookie = "";
+        this.xCsrfToken = "";
+        this.jsessionID = null;
+        this.authenticationMessage = message;
+        this.api = null;
+    }
 
-	public String getAuthenticationMessage() {
-		return authenticationMessage;
-	}
+
+    public String getMobileAppTokenCookie() {
+        return mobileAppTokenCookie;
+    }
+
+    public String getxCsrfToken() {
+        return xCsrfToken;
+    }
+
+    public String getJsessionID(){
+        return this.jsessionID;
+    }
+    public boolean isValid() {
+        return !(mobileAppTokenCookie.isEmpty() || xCsrfToken.isEmpty());
+    }
+
+    public String getAuthenticationMessage() {
+        return authenticationMessage;
+    }
 }
