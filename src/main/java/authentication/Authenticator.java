@@ -10,21 +10,25 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 
 public class Authenticator {
 
-    public static final AuthenticationObject INVALID_AUTHENTICATIONOBJECT = new AuthenticationObject("", "", "", null);
+    private static final AuthenticationObject INVALID_AUTHENTICATIONOBJECT = new AuthenticationObject("", "", "", null);
 
     private static final String BASE_BCS_URL = "https://fu-projekt.bcs-hosting.de/app/rest/auth/login";
     private static final String BASE_BCS_DEMO_URL = "http://fuberlinws18.demo.projektron.de";
     private static final String AUTH_ENDPOINT = "/app/rest/auth/login";
     private static final String NEW_AUTH_ENDPOINT = "/rest/auth/login";
 
+    /**
+     * Gets authenticationObject for older BCS-Instance
+     *
+     * @return TODO: Works only for older BCS instance with /app/[...]-path
+     */
     public AuthenticationObject authenticate(String username, String password) {
-        String urlBCS = BASE_BCS_URL;
 
         HashMap<String, String> data = new HashMap<>();
         data.put("userLogin", username);
         data.put("userPwd", password);
         try {
-            HttpResponse<String> authResponse = doPostRequest(urlBCS, data);
+            HttpResponse<String> authResponse = doPostRequest(BASE_BCS_URL, data);
             if (authResponse.getCode() == 200) {
                 String mobileAppTokenCookie = getMobileAppTokenCookie(authResponse);
                 String xCsrfToken = getXCsrfToken(authResponse);
@@ -41,10 +45,11 @@ public class Authenticator {
     }
 
     /**
+     * Gets authenticationObject for newer *demo*-BCS-Instance
+     *
      * @param username     the username for the account that should be logged in
      * @param password     the corresponding password
      * @param newInterface if you want to login to the older bookings set false, if you want the mylin-interface set true
-     * @return
      */
     public AuthenticationObject authenticateToDemoServer(String username, String password, boolean newInterface) {
         String urlBCS = BASE_BCS_DEMO_URL;
@@ -102,7 +107,7 @@ public class Authenticator {
     private HttpResponse<String> doPostRequest(String url, HashMap<String, String> data) throws UnirestException {
         var x = Unirest.post(url).header("Content-Type", "application/json").header("cache-control", "no-cache")
                 .header("Content-Encoding", "UTF-8").body(new JSONObject(data).toString());
-                return x.asString();
+        return x.asString();
     }
 
     private String getXCsrfToken(HttpResponse<String> authResponse) {
@@ -114,16 +119,13 @@ public class Authenticator {
         System.out.println(cookies);
         int beginIndex = cookies.indexOf("MobileAppToken");
         int endIndex = cookies.substring(beginIndex).indexOf(";");
-        String mobileAppTokenCookie = cookies.substring(beginIndex, endIndex);
-        return mobileAppTokenCookie;
+        return cookies.substring(beginIndex, endIndex);
     }
 
     private String getJSessionID(HttpResponse<String> authReponse) {
         String cookies = authReponse.getHeaders().get("set-cookie");
         var cookiesSplit = cookies.split(";");
-        var jsession = cookiesSplit[0].substring(11);
-        return jsession;
-
+        return cookiesSplit[0].substring(11);
     }
 
 }

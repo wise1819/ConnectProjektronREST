@@ -14,12 +14,10 @@ public class AuthenticationObject {
 
     /**
      * AuthenticationObject containing Cookie-Data
-     *
-     * @param xCsrfToken
      */
     public AuthenticationObject(String xCsrfToken, String mobileAppTokenCookie, String JSessionID, API_TYPE api) {
 
-        if (api == api.BOOKINGS) {
+        if (api == API_TYPE.BOOKINGS) {
             this.mobileAppTokenCookie = mobileAppTokenCookie;
             this.xCsrfToken = xCsrfToken;
             this.authenticationMessage = "";
@@ -37,8 +35,6 @@ public class AuthenticationObject {
 
     /**
      * AuthenticationObject if authentication did not work
-     *
-     * @param message
      */
     public AuthenticationObject(String message) {
         this.mobileAppTokenCookie = "";
@@ -57,9 +53,10 @@ public class AuthenticationObject {
         return xCsrfToken;
     }
 
-    public String getJsessionID(){
+    public String getJsessionID() {
         return this.jsessionID;
     }
+
     public boolean isValid() {
         return !(mobileAppTokenCookie.isEmpty() || xCsrfToken.isEmpty());
     }

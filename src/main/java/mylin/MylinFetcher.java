@@ -18,35 +18,35 @@ public class MylinFetcher {
     }
 
     private String url;
+    private String username;
+    private String password;
     private static final String OWN_SPRINTS = "/rest/mylyn/scrum/sprints";
     private static final String ALL_TICKETS = "/rest/mylyn/tickets/all";
     private static final String OWN_TICKETS = "/rest/mylyn/tickets";
 
-    public MylinFetcher(String base_url){
+    public MylinFetcher(String base_url, String username, String password) {
         this.url = base_url;
+        this.username = username;
+        this.password = password;
     }
 
-    public JSONArray fetchMylin(String bcs_base_url, String username, String password, RESSOURCES res) {
-
+    public JSONArray fetchMylin(RESSOURCES res) {
         if (res == RESSOURCES.OWN_SPRINTS) {
             url = url + OWN_SPRINTS;
         } else if (res == RESSOURCES.ALL_TICKETS) {
             url = url + ALL_TICKETS;
-        } else if (res == RESSOURCES.OWN_TICKETS)
-        {
+        } else if (res == RESSOURCES.OWN_TICKETS) {
             url = url + OWN_TICKETS;
         }
 
         var authenticator = new Authenticator();
-        var auth = authenticator.authenticateToDemoServer(username,password, true);
+        var auth = authenticator.authenticateToDemoServer(username, password, true);
 
         try {
             HttpResponse<JsonNode> response = getRequestWithAuthObject(auth, url);
 
             JsonNode responseBody = response.getBody();
-            var json = responseBody.getArray();
-
-            return json;
+            return responseBody.getArray();
         } catch (UnirestException e) {
             e.printStackTrace();
         }
