@@ -1,18 +1,14 @@
-
-
-import authentication.Authenticator;
-
 import bookings.BookingsFetcher;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import mylin.MylinFetcher;
 
 
 public class UnirestAuthorization {
-    //TODO: Make userdata changable from the outside
-    private static String username = "Admin";
-    private static String password = "Admin";
-    //TODO: make this URL changable from the outsite (via cli, enviroment, config-file,...)
-    private static Authenticator authenticator;
+    //TODO: 1. Fill account information and base URL for BCS instance here
+    public static String username = "Admin";
+    public static String password = "Admin";
+    public static String bcs_base_url = "http://fuberlinws18.demo.projektron.de";
+
     public static void main(String[] args) throws UnirestException {
 
 
@@ -21,24 +17,21 @@ public class UnirestAuthorization {
             return;
         }
 
-        authenticator = new Authenticator();
-        var authobject = authenticator.authenticateToDemoServer(username,password);
+
+
 
         /* ### GET BOOKING-DATA */
-        var bookingsFetchter = new BookingsFetcher();
-        var bookings = bookingsFetchter.fetchAllBookingsForAccount(authobject);
-        bookings.forEach(System.out::println);
+        var bookingsFetchter = new BookingsFetcher(bcs_base_url,username,password);
+        var bookings = bookingsFetchter.fetchAllBookingsForAccount();
 
 
         /* ### GET MYLIN-DATA ###*/
-
-
-        var ownSprints = new MylinFetcher();
-        //Set RESSOURCES-Parameter to choose REST-Endpoint
+        var ownSprints = new MylinFetcher(bcs_base_url);
+        // Set RESSOURCES-Parameter to choose REST-Endpoint
         // OWN_TICKETS => get /rest/mylyn/tickets
         // ALL_TICKETS => get /rest/mylyn/tickets/all
         // OWN_SPRINTS => get /rest/mylyn/scrum/sprints/
-        var json = ownSprints.fetchMylin(authobject, MylinFetcher.RESSOURCES.OWN_SPRINTS);
-        System.out.println(json.toString());
+        var json = ownSprints.fetchMylin(bcs_base_url, username, password, MylinFetcher.RESSOURCES.ALL_TICKETS);
+
     }
 }

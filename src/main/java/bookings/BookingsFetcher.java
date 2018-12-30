@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import authentication.Authenticator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,11 +18,28 @@ import authentication.AuthenticationObject;
 
 public class BookingsFetcher {
 
-	private static final String BCS_SERVER = "http://fuberlinws18.demo.projektron.de";
 	private static final String BOOKINGS_PATH = "/app/rest/timerecording/bookings";
+	private String bcs_url;
+	private String username;
+	private String password;
 
-	public List<JSONObject> fetchAllBookingsForAccount(AuthenticationObject auth) {
-		String url = BCS_SERVER + BOOKINGS_PATH;
+
+	public BookingsFetcher(String bcs_url, String username, String password) {
+		this.bcs_url = bcs_url;
+		this.username = username;
+		this.password = password;
+	}
+
+	/**
+	 * This method returns the bookings-array
+	 * @return the bookings contained in the json-attribute "bookings"
+	 */
+	public List<JSONObject> fetchAllBookingsForAccount() {
+		String url = this.bcs_url + BOOKINGS_PATH;
+
+		var authenticator = new Authenticator();
+		var auth = authenticator.authenticateToDemoServer(this.username, this.password, false );
+
 		try {
 			HttpResponse<JsonNode> response = getRequestWithAuthObject(auth, url);
 
@@ -42,10 +60,13 @@ public class BookingsFetcher {
 		return Collections.emptyList();
 	}
 
+	//TODO: change to new Cookies
 	private HttpResponse<JsonNode> getRequestWithAuthObject(AuthenticationObject auth, String url)
 			throws UnirestException {
-		return Unirest.get(url).header("Cookie", auth.getMobileAppTokenCookie())
-				.header("X-CSRF-Token", auth.getxCsrfToken()).header("cache-control", "no-cache").asJson();
+		var request = Unirest.get(url).header("X-CSRF-Token", auth.getxCsrfToken()).header("cache-control", "no-cache")
+				.header("MobileAppToken", auth.getMobileAppTokenCookie());
+				return request.asJson();
+
 	}
 
 }

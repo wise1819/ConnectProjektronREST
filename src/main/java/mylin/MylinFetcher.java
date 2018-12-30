@@ -1,6 +1,7 @@
 package mylin;
 
 import authentication.AuthenticationObject;
+import authentication.Authenticator;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
@@ -16,22 +17,28 @@ public class MylinFetcher {
         OWN_SPRINTS, ALL_TICKETS, OWN_TICKETS
     }
 
-    private static final String BCS_SERVER = "http://fuberlinws18.demo.projektron.de";
+    private String url;
     private static final String OWN_SPRINTS = "/rest/mylyn/scrum/sprints";
     private static final String ALL_TICKETS = "/rest/mylyn/tickets/all";
     private static final String OWN_TICKETS = "/rest/mylyn/tickets";
 
-    public JSONArray fetchMylin(AuthenticationObject auth, RESSOURCES res) {
+    public MylinFetcher(String base_url){
+        this.url = base_url;
+    }
 
-        String url = "";
+    public JSONArray fetchMylin(String bcs_base_url, String username, String password, RESSOURCES res) {
+
         if (res == RESSOURCES.OWN_SPRINTS) {
-            url = BCS_SERVER + OWN_SPRINTS;
+            url = url + OWN_SPRINTS;
         } else if (res == RESSOURCES.ALL_TICKETS) {
-            url = BCS_SERVER + ALL_TICKETS;
+            url = url + ALL_TICKETS;
         } else if (res == RESSOURCES.OWN_TICKETS)
         {
-            url = BCS_SERVER + OWN_TICKETS;
+            url = url + OWN_TICKETS;
         }
+
+        var authenticator = new Authenticator();
+        var auth = authenticator.authenticateToDemoServer(username,password, true);
 
         try {
             HttpResponse<JsonNode> response = getRequestWithAuthObject(auth, url);
