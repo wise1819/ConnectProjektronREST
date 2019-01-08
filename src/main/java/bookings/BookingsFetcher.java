@@ -61,7 +61,7 @@ public class BookingsFetcher {
         return Collections.emptyList();
     }
 
-    //TODO: change to new Cookies
+    //TODO: Not working for old BCS-URL, Error-Code is 401 Unauthorized, but Authorization is working after Copy&Pasting the headers to Postman
     private HttpResponse<JsonNode> getRequestWithAuthObject(AuthenticationObject auth, String url)
             throws UnirestException {
         var request = Unirest.get(url).header("X-CSRF-Token", auth.getxCsrfToken()).header("cache-control", "no-cache")

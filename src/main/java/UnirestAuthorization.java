@@ -1,36 +1,52 @@
 import bookings.BookingsFetcher;
-import com.mashape.unirest.http.exceptions.UnirestException;
 import mylin.MylinFetcher;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-//TODO: Currently only tested with newer Demo-Server, not older server
+import java.util.List;
+
 public class UnirestAuthorization {
     //TODO: 1. Fill account information and base URL for BCS instance here
     private static String username = "Admin";
     private static String password = "Admin";
-    private static String bcs_base_url = "http://fuberlinws18.demo.projektron.de";
+    //old is: http://fu-projekt.bcs-hosting.de, new is: http://fuberlinws18.demo.projektron.de
+    private static String bcs_base_url = "http://fu-projekt.bcs-hosting.de";
 
-    public static void main(String[] args) {
-        if (username.equals("") || password.equals("")) {
-            System.out.println("Please provide Username and password");
-            return;
-        }
+    /**
+     * Gets all Bookings for the account of the user entered in the static field variables
+     *
+     * @return A JsonList with only the Bookings, the SyncStateTimestamp is stripped
+     */
+    public static List<JSONObject> getBookings() {
+        checkForPW();
 
-
-        //TODO: 2. To fetch Booking-Data use Code as seen below
-
-        /* ### GET BOOKING-DATA */
         var bookingsFetchter = new BookingsFetcher(bcs_base_url, username, password);
-        var bookings = bookingsFetchter.fetchAllBookingsForAccount();
+        return bookingsFetchter.fetchAllBookingsForAccount();
 
-        //TODO: 3. Since Mylin has different Endpoints use the ENUM-Types to specify which endpoint to use
 
-        /* ### GET MYLIN-DATA ###*/
-        // OWN_TICKETS => get /rest/mylyn/tickets
-        // ALL_TICKETS => get /rest/mylyn/tickets/all
-        // OWN_SPRINTS => get /rest/mylyn/scrum/sprints/
+    }
+
+    /**
+     * @param res the type of resource you would like to request: OWN_TICKETS, ALL_TICKETS or OWN_SPRINTS
+     * @return The full response as specified in the documentation
+     */
+    public static JSONArray getMylin(MylinFetcher.RESSOURCES res) {
 
         var ownSprints = new MylinFetcher(bcs_base_url, username, password);
-        var json = ownSprints.fetchMylin(MylinFetcher.RESSOURCES.OWN_SPRINTS);
+        return ownSprints.fetchMylin(res);
+    }
 
+
+    public static void main(String[] args) {
+
+        getBookings();
+        getMylin(MylinFetcher.RESSOURCES.ALL_TICKETS);
+
+    }
+
+    private static void checkForPW() {
+        if (username.equals("") || password.equals("")) {
+            System.err.println("Please provide Username and password");
+        }
     }
 }
